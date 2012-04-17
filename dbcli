@@ -160,7 +160,7 @@ def main(tgt, cmd, *_args):
 
         debug('args', args)
         debug('cmdline', "%s" % ' '.join(args))
-        print '# DBCLI NODE: %s' % node
+        print >> sys.stderr, '# DBCLI NODE: %s' % node
         os.spawnvp(os.P_WAIT, cmd, args)
 
 if __name__ == '__main__':
