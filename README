@@ -84,7 +84,7 @@ $ ./dbcli leaf1 mysqldump some_db some_table1 some_table2 | ./dbcli leaf2 mysql 
 
 $ watch -n 1 "./dbcli leaf6 mysql -e 'SHOW SLAVE STATUS \G'"
 
-    Every 1.0s: ./dbcli d mysql -e 'SHOW SLAVE STATUS \G'                                                       Wed Apr 18 04:12:14 2012
+    Every 1.0s: ./dbcli leaf6 mysql -e 'SHOW SLAVE STATUS \G'                                                       Wed Apr 18 04:12:14 2012
     
     *************************** 1. row ***************************
                    Slave_IO_State:
