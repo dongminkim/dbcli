@@ -1,0 +1,122 @@
+Usage
+
+$ ./dbcli --list
+
+    CONFIG_FILE:
+        /home/TMON/vanity/work/github/dbcli/dbcli.cfg
+    TARGET:
+        GROUP [all]
+            GROUP [top1]
+                GROUP [middle1]
+                    NODE [leaf1] Leaf 1 ................. top1.some.host:4401
+                    NODE [leaf2] Leaf 2 ................. leaf2.some.host:4402
+                    NODE [leaf3] Leaf 3 ................. top1.some.host:4403
+                GROUP [middle2]
+                    NODE [leaf4]  ....................... middle2.some.host
+            GROUP [top2]
+                NODE [leaf5]  ....................... top2.some.host:4401
+                NODE [leaf6]  ....................... leaf6.some.host:4402
+
+$ ./dbcli all mysql -e "SELECT NOW() FROM dual"
+
+    # DBCLI NODE: leaf1
+    +---------------------+
+    | NOW()               |
+    +---------------------+
+    | 2012-04-18 04:09:30 |
+    +---------------------+
+    # DBCLI NODE: leaf2
+    +---------------------+
+    | NOW()               |
+    +---------------------+
+    | 2012-04-18 04:09:30 |
+    +---------------------+
+    # DBCLI NODE: leaf3
+    +---------------------+
+    | NOW()               |
+    +---------------------+
+    | 2012-04-18 04:09:30 |
+    +---------------------+
+    # DBCLI NODE: leaf4
+    +---------------------+
+    | NOW()               |
+    +---------------------+
+    | 2012-04-18 04:09:30 |
+    +---------------------+
+    # DBCLI NODE: leaf5
+    +---------------------+
+    | NOW()               |
+    +---------------------+
+    | 2012-04-18 04:09:30 |
+    +---------------------+
+    # DBCLI NODE: leaf6
+    +---------------------+
+    | NOW()               |
+    +---------------------+
+    | 2012-04-18 04:09:30 |
+    +---------------------+
+
+$ ./dbcli leaf1 mysql
+
+    # DBCLI NODE: leaf1
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    Your MySQL connection id is 31014
+    Server version: 5.5.22 MySQL Community Server (GPL)
+    
+    Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+    
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+    
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+    
+    mysql>
+
+$ ./dbcli leaf1 mysqldump --no-data some_db > some_db.schema.sql
+
+    # DBCLI NODE: leaf1
+
+$ ./dbcli leaf1 mysqldump some_db some_table1 some_table2 | ./dbcli leaf2 mysql some_db
+
+    # DBCLI NODE: leaf1
+    # DBCLI NODE: leaf2
+
+$ watch -n 1 "./dbcli leaf6 mysql -e 'SHOW SLAVE STATUS \G'"
+
+    Every 1.0s: ./dbcli d mysql -e 'SHOW SLAVE STATUS \G'                                                       Wed Apr 18 04:12:14 2012
+    
+    *************************** 1. row ***************************
+                   Slave_IO_State:
+                      Master_Host: 10.10.12.24
+                      Master_User: repl
+                      Master_Port: 3306
+                    Connect_Retry: 60
+                  Master_Log_File: mysql-bin.000132
+              Read_Master_Log_Pos: 18584673
+                   Relay_Log_File: mysqld-relay-bin.000004
+                    Relay_Log_Pos: 88015905
+            Relay_Master_Log_File: mysql-bin.000113
+                 Slave_IO_Running: No
+                Slave_SQL_Running: No
+                  Replicate_Do_DB: ticketmonster,tmon_billing
+              Replicate_Ignore_DB:
+               Replicate_Do_Table:
+           Replicate_Ignore_Table:
+          Replicate_Wild_Do_Table:
+      Replicate_Wild_Ignore_Table: ticketmonster.SC_%,ticketmonster.TC_%,ticketmonster.uds_%,ticketmonster.mail_%,ticketmonster.sms_%,ti
+    cketmonster.MMS_%,ticketmonster.log
+                       Last_Errno: 0
+                       Last_Error:
+                     Skip_Counter: 0
+              Exec_Master_Log_Pos: 88015759
+                  Relay_Log_Space: 2011610821
+                  Until_Condition: None
+                   Until_Log_File:
+                    Until_Log_Pos: 0
+               Master_SSL_Allowed: No
+               Master_SSL_CA_File:
+               Master_SSL_CA_Path:
+                  Master_SSL_Cert:
+                Master_SSL_Cipher:
+                   Master_SSL_Key:
