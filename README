@@ -3,7 +3,7 @@ Usage
 $ ./dbcli --list
 
     CONFIG_FILE:
-        /home/TMON/vanity/work/github/dbcli/dbcli.cfg
+        /home/vanity/work/github/dbcli/dbcli.cfg
     TARGET:
         GROUP [all]
             GROUP [top1]
