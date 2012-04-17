@@ -99,13 +99,12 @@ $ watch -n 1 "./dbcli leaf6 mysql -e 'SHOW SLAVE STATUS \G'"
             Relay_Master_Log_File: mysql-bin.000113
                  Slave_IO_Running: No
                 Slave_SQL_Running: No
-                  Replicate_Do_DB: ticketmonster,tmon_billing
+                  Replicate_Do_DB: some_db,other_db
               Replicate_Ignore_DB:
                Replicate_Do_Table:
            Replicate_Ignore_Table:
           Replicate_Wild_Do_Table:
-      Replicate_Wild_Ignore_Table: ticketmonster.SC_%,ticketmonster.TC_%,ticketmonster.uds_%,ticketmonster.mail_%,ticketmonster.sms_%,ti
-    cketmonster.MMS_%,ticketmonster.log
+      Replicate_Wild_Ignore_Table: some_db.%_log
                        Last_Errno: 0
                        Last_Error:
                      Skip_Counter: 0
