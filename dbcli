@@ -58,7 +58,7 @@ def usage(verbose=False, errstr=''):
         print '\t -c        CONFIG_FILE'
         print '\t --conf    CONFIG_FILE'
         print '\t           : The configuration file that describes MySQL server nodes.'
-        print '\t             The default value is "<DOMAIN_NAME>.cfg" in the real directory of the executable;'
+        print '\t             The default value is "dbcli.cfg" in the real directory of the executable;'
         print '\t             currently "%s".' % DEFAULT_CONFIG_PATH
         print
         print '\t --list    : Show TARGET list.'
