@@ -30,6 +30,7 @@ import os, sys
 import getopt
 import ConfigParser
 import pprint
+import subprocess
 
 DEBUG=0
 HOST = os.uname()[1]
@@ -118,7 +119,7 @@ class Config:
         return repr(self.__dict__)+"\n"
 
 def loadConfig(cfgp, section, **defaults):
-    for k in 'my_cnf', 'host', 'port', 'user', 'password', 'server_id', 'desc':
+    for k in 'my_cnf', 'host', 'port', 'user', 'password', 'ssl_ca', 'ssl_cert', 'ssl_key', 'server_id', 'desc':
         if k not in defaults:
             defaults[k] = ''
     defaults['groups'] = None
@@ -167,22 +168,28 @@ def main(tgt, cmd, *_args):
             usage(False, 'UNKNOWN TARGET') and sys.exit(4)
         args = []
         if cfg.host == os.uname()[1] and cfg.my_cnf:
-            args.append("--my_cnf=%s" % cfg.my_cnf)
+            args.append('--my_cnf=%s' % cfg.my_cnf)
         else:
             if cfg.host:
-                args.append("-h%s" % cfg.host)
+                args.append('--host="%s"' % cfg.host)
             if cfg.port:
-                args.append("-P%s" % cfg.port)
+                args.append('--port=%s' % cfg.port)
             if cfg.user:
-                args.append("-u%s" % cfg.user)
+                args.append('--user="%s"' % cfg.user)
             if cfg.password:
-                args.append("-p%s" % cfg.password)
+                args.append('--password="%s"' % cfg.password)
+            if cfg.ssl_ca:
+                args.append('--ssl_ca="%s"' % cfg.ssl_ca)
+            if cfg.ssl_cert:
+                args.append('--ssl_cert="%s"' % cfg.ssl_cert)
+            if cfg.ssl_key:
+                args.append('--ssl_key="%s"' % cfg.ssl_key)
         args = [cmd] + args + list(_args)
 
         debug('args', args)
         debug('cmdline', "%s" % ' '.join(args))
         print >> sys.stderr, '# DBCLI NODE: %s' % node
-        os.spawnvp(os.P_WAIT, cmd, args)
+        subprocess.call(' '.join(args), shell=True)
 
 if __name__ == '__main__':
     configFileName = DEFAULT_CONFIG_PATH
