@@ -184,7 +184,7 @@ def main(tgt, cmd, *_args):
                 args.append('--ssl_cert="%s"' % cfg.ssl_cert)
             if cfg.ssl_key:
                 args.append('--ssl_key="%s"' % cfg.ssl_key)
-        args = [cmd] + args + list(_args)
+        args = [cmd] + args + ['"%s"' % _arg.replace('"', '\\"') for _arg in _args]
 
         debug('args', args)
         debug('cmdline', "%s" % ' '.join(args))
