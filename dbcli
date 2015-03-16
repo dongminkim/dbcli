@@ -83,6 +83,9 @@ def usage(verbose=False, errstr=''):
         print '\t             The default value is "dbcli.cfg" in the real directory of the executable;'
         print '\t             currently "%s".' % DEFAULT_CONFIG_PATH
         print
+        print '\t --edit    : Edit the configuration file.'
+        print '\t             currently "%s".' % DEFAULT_CONFIG_PATH
+        print
         print '\t --list    : Show TARGET list.'
         print
         print 'COMMAND:'
@@ -189,18 +192,22 @@ def main(tgt, cmd, *_args):
         debug('args', args)
         debug('cmdline', "%s" % ' '.join(args))
         print >> sys.stderr, '# DBCLI NODE: %s' % node
-        subprocess.call(' '.join(args), shell=True)
+        retcode = subprocess.call(' '.join(args), shell=True)
+        sys.exit(retcode)
 
 if __name__ == '__main__':
     configFileName = DEFAULT_CONFIG_PATH
     listTargetsAndExit = False
 
-    opts, args = getopt.getopt(sys.argv[1:], ':c:', ['conf=', 'help', 'debug', 'list'])
+    opts, args = getopt.getopt(sys.argv[1:], ':c:', ['conf=', 'help', 'debug', 'edit', 'list'])
     for o, a in opts:
         if o in ('-c', '--conf'):
             configFileName = a
         elif o in ('--help'):
             usage(True) and sys.exit(0)
+        elif o in ('--edit'):
+            retcode = subprocess.call('$EDITOR %s' % configFileName, shell=True)
+            sys.exit(retcode)
         elif o in ('--list'):
             listTargetsAndExit = True
         elif o in ('--debug'):
