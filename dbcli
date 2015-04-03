@@ -193,7 +193,8 @@ def main(tgt, cmd, *_args):
         debug('cmdline', "%s" % ' '.join(args))
         print >> sys.stderr, '# DBCLI NODE: %s' % node
         retcode = subprocess.call(' '.join(args), shell=True)
-        sys.exit(retcode)
+        if retcode != 0:
+            sys.exit(retcode)
 
 if __name__ == '__main__':
     configFileName = DEFAULT_CONFIG_PATH
