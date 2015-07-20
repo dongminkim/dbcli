@@ -33,6 +33,7 @@ import pprint
 import subprocess
 
 DEBUG=0
+IGNORE_ERROR=0
 HOST = os.uname()[1]
 DOMAIN = HOST.split('.', 1)[1]
 REAL_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
@@ -76,6 +77,8 @@ def usage(verbose=False, errstr=''):
         print '\t --help    : Show this screen.'
         print
         print '\t --debug   : Display debug messages.'
+        print
+        print '\t --ignore  : Ignore mysql error on a node and keep going on.'
         print
         print '\t -c        CONFIG_FILE'
         print '\t --conf    CONFIG_FILE'
@@ -193,14 +196,14 @@ def main(tgt, cmd, *_args):
         debug('cmdline', "%s" % ' '.join(args))
         print >> sys.stderr, '# DBCLI NODE: %s' % node
         retcode = subprocess.call(' '.join(args), shell=True)
-        if retcode != 0:
+        if retcode != 0 and not IGNORE_ERROR:
             sys.exit(retcode)
 
 if __name__ == '__main__':
     configFileName = DEFAULT_CONFIG_PATH
     listTargetsAndExit = False
 
-    opts, args = getopt.getopt(sys.argv[1:], ':c:', ['conf=', 'help', 'debug', 'edit', 'list'])
+    opts, args = getopt.getopt(sys.argv[1:], ':c:', ['conf=', 'help', 'debug', 'edit', 'list', 'ignore'])
     for o, a in opts:
         if o in ('-c', '--conf'):
             configFileName = a
@@ -213,6 +216,8 @@ if __name__ == '__main__':
             listTargetsAndExit = True
         elif o in ('--debug'):
             DEBUG=1
+        elif o in ('--ignore'):
+            IGNORE_ERROR=1
     debug('cfg path', configFileName)
 
     if not os.path.isfile(configFileName):
