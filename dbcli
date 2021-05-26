@@ -35,7 +35,6 @@ import subprocess
 DEBUG=0
 IGNORE_ERROR=0
 HOST = os.uname()[1]
-DOMAIN = HOST.split('.', 1)[1]
 REAL_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 DEFAULT_CONFIG_PATH = os.path.join(REAL_DIRECTORY, 'dbcli.cfg')
 cfgMain = None
@@ -210,7 +209,8 @@ if __name__ == '__main__':
         elif o in ('--help'):
             usage(True) and sys.exit(0)
         elif o in ('--edit'):
-            retcode = subprocess.call('$EDITOR %s' % configFileName, shell=True)
+            editor = os.getenv('EDITOR', '/usr/bin/vim')
+            retcode = subprocess.call('%s %s' % (editor, configFileName), shell=True)
             sys.exit(retcode)
         elif o in ('--list'):
             listTargetsAndExit = True
