@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # vim:tabstop=4 softtabstop=4 shiftwidth=4:expandtab
 #==============================================================================
@@ -28,7 +28,7 @@
 
 import os, sys
 import getopt
-import ConfigParser
+import configparser
 import pprint
 import subprocess
 
@@ -42,7 +42,7 @@ cfgMain = None
 def debug(k, v):
     if not DEBUG:
         return
-    print 'DEBUG[%s]: %s' % (str(k), str(v))
+    print('DEBUG[%s]: %s' % (str(k), str(v)))
 
 def stringHostAndPort(host, port=None):
     if not host:
@@ -54,55 +54,55 @@ def stringHostAndPort(host, port=None):
 
 def showGroupsAndNodes(cfg, depth=1):
     if depth==1:
-        print '%sGROUP [%s]' % ('\t'*depth, cfg.name)
+        print('%sGROUP [%s]' % ('\t'*depth, cfg.name))
     if cfg.groups:
-        for groupName, cfgChild in sorted(cfg.groups.iteritems()):
-            print '%sGROUP [%s]' % ('\t'*(depth+1), groupName)
+        for groupName, cfgChild in sorted(cfg.groups.items()):
+            print('%sGROUP [%s]' % ('\t'*(depth+1), groupName))
             showGroupsAndNodes(cfgChild, depth+1)
     elif cfg.nodes:
         maxlen = 25
-        for nodeName, node in sorted(cfg.nodes.iteritems()):
+        for nodeName, node in sorted(cfg.nodes.items()):
             maxlen = max(maxlen, len(nodeName) + len(str(node.desc)))
-        for nodeName, node in sorted(cfg.nodes.iteritems()):
+        for nodeName, node in sorted(cfg.nodes.items()):
             dots = '.' * (3 + max(0, maxlen - len(nodeName) - len(str(node.desc))))
-            print '%sNODE [%s] %s %s %s' % ('\t'*(depth+1), nodeName, node.desc, dots, stringHostAndPort(node.host, node.port))
+            print('%sNODE [%s] %s %s %s' % ('\t'*(depth+1), nodeName, node.desc, dots, stringHostAndPort(node.host, node.port)))
     return True
 
 def usage(verbose=False, errstr=''):
     if verbose:
-        print 'Usage: %s [OPTION ...] TARGET COMMAND [PARAM [PARAM ...]]' % sys.argv[0]
-        print
-        print 'OPTION:'
-        print '\t --help    : Show this screen.'
-        print
-        print '\t --debug   : Display debug messages.'
-        print
-        print '\t --ignore  : Ignore mysql error on a node and keep going on.'
-        print
-        print '\t -c        CONFIG_FILE'
-        print '\t --conf    CONFIG_FILE'
-        print '\t           : The configuration file that describes MySQL server nodes.'
-        print '\t             The default value is "dbcli.cfg" in the real directory of the executable;'
-        print '\t             currently "%s".' % DEFAULT_CONFIG_PATH
-        print
-        print '\t --edit    : Edit the configuration file.'
-        print '\t             currently "%s".' % DEFAULT_CONFIG_PATH
-        print
-        print '\t --list    : Show TARGET list.'
-        print
-        print 'COMMAND:'
-        print '\t\t%s' % 'mysql'
-        print '\t\t%s' % 'mysqldump'
-        print '\t\t%s' % 'mysqladmin'
-        print '\t\t%s' % '...'
-        print
+        print('Usage: %s [OPTION ...] TARGET COMMAND [PARAM [PARAM ...]]' % sys.argv[0])
+        print()
+        print('OPTION:')
+        print('\t --help    : Show this screen.')
+        print()
+        print('\t --debug   : Display debug messages.')
+        print()
+        print('\t --ignore  : Ignore mysql error on a node and keep going on.')
+        print()
+        print('\t -c        CONFIG_FILE')
+        print('\t --conf    CONFIG_FILE')
+        print('\t           : The configuration file that describes MySQL server nodes.')
+        print('\t             The default value is "dbcli.cfg" in the real directory of the executable;')
+        print('\t             currently "%s".' % DEFAULT_CONFIG_PATH)
+        print()
+        print('\t --edit    : Edit the configuration file.')
+        print('\t             currently "%s".' % DEFAULT_CONFIG_PATH)
+        print()
+        print('\t --list    : Show TARGET list.')
+        print()
+        print('COMMAND:')
+        print('\t\t%s' % 'mysql')
+        print('\t\t%s' % 'mysqldump')
+        print('\t\t%s' % 'mysqladmin')
+        print('\t\t%s' % '...')
+        print()
     else:
         if errstr:
-            print >> sys.stderr, 'Error:', errstr
-        print >> sys.stderr
-        print >> sys.stderr, 'Try:'
-        print >> sys.stderr, '\t%s --help' % sys.argv[0]
-        print >> sys.stderr
+            print('Error:', errstr, file=sys.stderr)
+        print(file=sys.stderr)
+        print('Try:', file=sys.stderr)
+        print('\t%s --help' % sys.argv[0], file=sys.stderr)
+        print(file=sys.stderr)
     return True
 
 class Config:
@@ -115,9 +115,9 @@ class Config:
                         defaults[k] = v
                     else:
                         defaults[k] = t(v)
-        except ConfigParser.NoSectionError:
+        except configparser.NoSectionError:
             #logger.warning('Config: no such section [%s]', cfgsection)
-            print >> sys.stderr, 'Config: no such section [%s]' % cfgsection
+            print('Config: no such section [%s]' % cfgsection, file=sys.stderr)
         self.__dict__.update(defaults)
     def __repr__(self):
         #return pprint.pformat(self.__dict__)
@@ -167,7 +167,7 @@ def main(tgt, cmd, *_args):
     elif tgt == 'all':
         tgtCfgDict = cfgMain.flatNodes
     debug('tgtCfgDict', tgtCfgDict)
-    for node, cfg in sorted(tgtCfgDict.iteritems()):
+    for node, cfg in sorted(tgtCfgDict.items()):
         debug('cfg', cfg)
         if not cfg:
             usage(False, 'UNKNOWN TARGET') and sys.exit(4)
@@ -193,7 +193,7 @@ def main(tgt, cmd, *_args):
 
         debug('args', args)
         debug('cmdline', "%s" % ' '.join(args))
-        print >> sys.stderr, '# DBCLI NODE: %s' % node
+        print('# DBCLI NODE: %s' % node, file=sys.stderr)
         retcode = subprocess.call(' '.join(args), shell=True)
         if retcode != 0 and not IGNORE_ERROR:
             sys.exit(retcode)
@@ -222,24 +222,24 @@ if __name__ == '__main__':
 
     if not os.path.isfile(configFileName):
         usage(False, 'MISSING CONFIG: %s' % configFileName) and sys.exit(1)
-    cfgp = ConfigParser.ConfigParser()
+    cfgp = configparser.ConfigParser()
     cfgp.read(configFileName)
     cfgMain = loadConfig(cfgp, 'all')
     if listTargetsAndExit:
-        print 'CONFIG_FILE:'
-        print '\t%s' % configFileName
-        print 'TARGET:'
+        print('CONFIG_FILE:')
+        print('\t%s' % configFileName)
+        print('TARGET:')
         showGroupsAndNodes(cfgMain) and sys.exit(0)
 
     debug('all', {
-        'groups': sorted(cfgMain.groups.iterkeys()),
-        'flatGroups': sorted(cfgMain.flatGroups.iterkeys()),
-        'flatNodes': sorted(cfgMain.flatNodes.iterkeys())})
-    for k in cfgMain.groups.iterkeys():
+        'groups': sorted(cfgMain.groups.keys()),
+        'flatGroups': sorted(cfgMain.flatGroups.keys()),
+        'flatNodes': sorted(cfgMain.flatNodes.keys())})
+    for k in cfgMain.groups.keys():
         debug(k, {
-            'groups': sorted(cfgMain.groups[k].groups.iterkeys()),
-            'flatGroups': sorted(cfgMain.groups[k].flatGroups.iterkeys()),
-            'flatNodes': sorted(cfgMain.groups[k].flatNodes.iterkeys())})
+            'groups': sorted(cfgMain.groups[k].groups.keys()),
+            'flatGroups': sorted(cfgMain.groups[k].flatGroups.keys()),
+            'flatNodes': sorted(cfgMain.groups[k].flatNodes.keys())})
 
     if len(args) < 1:
         usage(False, 'MISSING TARGET') and sys.exit(2)
